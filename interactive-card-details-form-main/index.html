@@ -1,51 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- displays site properly based on user's device -->
 
   <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-  
+  <link rel="stylesheet" href="style.css">
+
   <title>Frontend Mentor | Interactive card details form</title>
 
-  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
   <style>
-    .attribution { font-size: 11px; text-align: center; }
-    .attribution a { color: hsl(228, 45%, 44%); }
+    body {
+      margin: 0;
+      padding: 0;
+    }
   </style>
 </head>
+
 <body>
+  <main id="app">
+    <div class="cards-container">
+      <div class="card card--front">
+        <!-- Could be easier to do it with a background-image but accecibilty would be affected  -->
+        <img src="./images/bg-card-front.png" alt="Representation of the front of a credit card">
+        <div class="card__body">
+          <img src="./images/card-logo.svg" alt="Representation of a credit card logo placeholder">
 
-  0000 0000 0000 0000
-  Jane Appleseed
-  00/00
+          <h2 class="card__body__card-header"></h2>
+          <span class="card__body__card-text"></span>
+          <span class="card__body__card-text"></span>
+        </div>
+      </div>
 
-  000
+      <!-- Could be nice to automate the creation of the card within the script or using a web component -->
+      <div class="card card--back">
+        <img src="./images/bg-card-back.png" alt="Representation of a credit card logo placeholder">
+        <div class="card__body">
+          <span class="card__body__card-text card__body__card-text--back"></span>
+        </div>
+      </div>
+    </div>
 
-  Cardholder Name
-  e.g. Jane Appleseed
+    <form>
+      <label for="cardholder-name">
+        CARDHOLDER NAME
+      </label>
+      <input type="text" id="card-number">
 
-  Card Number
-  e.g. 1234 5678 9123 0000
+      <label for="card-number">
+        CARD NUMBER
+      </label>
 
-  Exp. Date (MM/YY)
-  MM
-  YY
+      <div class="form__row">
+        <div>
+          <label for="expiration-date-month">
+            EXP. FATE (MM/YY)
+          </label>
+          <input type="text" id="expiration-date-month">
+          <input type="text" id="expiration-date-year">
+        </div>
 
-  CVC
-  e.g. 123
+        <input type="text" id="cvc">
+        <label for="cvc">
+          CVC
+        </label>
+        <input type="text" id="cardholder-name">
+      </div>
 
-  Confirm
-
-  <!-- Completed state start -->
-
-  Thank you!
-  We've added your card details
-  Continue
-  
-  <div class="attribution">
-    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
-    Coded by <a href="#">Your Name Here</a>.
-  </div>
+      <button></button>
+    </form>
+  </main>
 </body>
+
 </html>
