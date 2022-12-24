@@ -9,6 +9,16 @@
   <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
   <link rel="stylesheet" href="style.css">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;900&family=Space+Grotesk:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- <style>
+    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;900&family=Space+Grotesk:wght@400;600;700&display=swap');
+  </style> -->
+
   <title>Frontend Mentor | Interactive card details form</title>
 
   <style>
@@ -25,12 +35,15 @@
       <div class="card card--front">
         <!-- Could be easier to do it with a background-image but accecibilty would be affected  -->
         <img src="./images/bg-card-front.png" alt="Representation of the front of a credit card">
-        <div class="card__body">
-          <img src="./images/card-logo.svg" alt="Representation of a credit card logo placeholder">
 
-          <h2 class="card__body__card-header"></h2>
-          <span class="card__body__card-text"></span>
-          <span class="card__body__card-text"></span>
+        <div class="card__body card__body--front">
+          <img width="84" height="47" src="./images/card-logo.svg"
+            alt="Representation of a credit card logo placeholder">
+          <div>
+            <h2 class="card__body__card-header">0000 0000 0000 0000</h2>
+            <span class="card__body__card-text--front">TATA</span>
+            <span class="card__body__card-text--front">TUTU</span>
+          </div>
         </div>
       </div>
 
@@ -38,7 +51,7 @@
       <div class="card card--back">
         <img src="./images/bg-card-back.png" alt="Representation of a credit card logo placeholder">
         <div class="card__body">
-          <span class="card__body__card-text card__body__card-text--back"></span>
+          <span class="card__body__card-text card__body__card-text--back">TOTO</span>
         </div>
       </div>
     </div>

@@ -1,13 +1,59 @@
+
+
 #app {
+    font-family: 'Heebo', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
+
     width: 100%;
     height: 100vh;
 
     display: flex;
     justify-content: space-around;
     align-items: center;
-    
+
     background-image: url('./images/bg-main-desktop.png');
     background-position: left;
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.card {
+    position: relative;
+    color: orange;
+}
+
+.card:first-child {
+    margin-bottom: 40px;
+}
+
+.card--front {
+    margin-right: 100px;
+}
+
+.card--back {
+    margin-left: 100px;
+}
+
+.card__body {
+    position: absolute;
+    top: 0;
+
+    width: calc(100% - 60px);
+    height: calc(100% - 60px - 4px); /* Card height - padding Y - ligne height compensation */
+
+    padding: 30px;
+}
+
+.card__body--front {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card__body--front > div {
+    justify-self: flex-end;
+}
+
+.card__body--front > div > span:last-child {
+    float: right
 }
