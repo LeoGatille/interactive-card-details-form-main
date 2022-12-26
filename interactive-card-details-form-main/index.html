@@ -54,18 +54,24 @@
       </div>
     </div>
 
-    <form>
-      <label for="cardholder-name">
-        CARDHOLDER NAME
-      </label>
-      <input type="text" id="card-number">
 
-      <label for="card-number">
-        CARD NUMBER
-      </label>
+    <form>
+      <div class="form__section">
+        <label for="cardholder-name">
+          CARDHOLDER NAME
+        </label>
+        <input type="text" id="card-number">
+
+      </div>
+      <div class="form__section">
+        <label for="card-number">
+          CARD NUMBER
+        </label>
+        <input type="text" id="card-number">
+      </div>
 
       <div class="form__row">
-        <div>
+        <div class="form__section form__section--flex">
           <label for="expiration-date-month">
             EXP. FATE (MM/YY)
           </label>
@@ -73,14 +79,15 @@
           <input type="text" id="expiration-date-year">
         </div>
 
-        <input type="text" id="cvc">
-        <label for="cvc">
-          CVC
-        </label>
-        <input type="text" id="cardholder-name">
+        <div class="form__section">
+          <label for="cvc">
+            CVC
+          </label>
+          <input type="text" id="cvc">
+        </div>
       </div>
 
-      <button></button>
+      <button>VALIDATE</button>
     </form>
   </main>
 </body>

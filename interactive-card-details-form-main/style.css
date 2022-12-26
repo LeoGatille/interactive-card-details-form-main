@@ -3,9 +3,11 @@
     --ligth-violet: hsl(270, 3%, 87%);
     --violet: hsl(279, 6%, 55%);
     --dark-violet: hsl(278, 68%, 11%);
+    --error: hsl(0, 100%, 66%);
+    --acive-gradiant-start: hsl(249, 99%, 64%);
+    --acive-gradiant-end: hsl(278, 94%, 30%);
+    --active-gradiant: linear-gradient(var(--acive-gradiant-start), var(--acive-gradiant-end));
 }
-
-
 
 #app {
     font-family: 'Heebo', sans-serif;
@@ -17,14 +19,17 @@
     height: 100vh;
 
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
+    flex-wrap: wrap;
 
     background-image: url('./images/bg-main-desktop.png');
     background-position: left;
     background-size: contain;
     background-repeat: no-repeat;
 }
+
+/* CARD */
 
 .card {
     position: relative;
@@ -80,7 +85,92 @@
 }
 
 .card__body--back > span {
-    /* Compensation to fit with the image */
+    /* Compensation to fit within the image */
     margin-right: 30px;
+    margin-bottom: 5px;
+}
+
+
+/* FORM */
+
+form {
+    width: 25%;
+}
+
+.form__row {
+    display: flex;
+}
+
+.form__row > .form__section {
+    flex: 1 1;
+    /* justify-content: space-between; */
+}
+
+.form__row > .form__section:not(:last-child) {
+    margin-right: 10px;
+}
+
+.form__section {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    /* flex-direction: column; */
+}
+
+
+.form__section > input {
+    width: 100%;
+    padding: 10px;
+
+    font-size: 1.2em;
+    color: var(--dark-violet);
+
+    margin-bottom: 1em;
+
+    border-radius: 7px;
+    border: solid var(--ligth-violet) 1px;
+}
+
+.form__section > input::placeholder {
+    color: var(--ligth-violet);
+}
+
+.form__section > input:focus {
+    outline: none;
+    border: solid 1px transparent;
+    
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-image: 
+        linear-gradient(white, white), 
+        linear-gradient(to top, var(--acive-gradiant-start), var(--acive-gradiant-end));
+
+}
+
+.form__section > .input--active {
+    overflow: hidden;
+    border-radius: 7px;
+    border: solid var(--active-gradiant) 1px;
+}
+
+.form__section > .input--error {
+    border: solid var(--error) 1px;
+}
+
+
+.form__section--flex > input{
+    width: 30%;
+} 
+
+.form__section--flex > input:not(:last-child) {
+    margin-right: 0.5em;
+}
+
+.form__section > label {
+    width: 100%;
+    color: var(--dark-violet);
+    font-weight: 600;
+    font-size: 0.8em;
+
     margin-bottom: 5px;
 }
