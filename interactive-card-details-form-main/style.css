@@ -15,7 +15,8 @@
     font-weight: 500;
 
 
-    width: 100%;
+    max-width: 100%;
+    min-width: 375px;
     height: 100vh;
 
     display: flex;
@@ -30,13 +31,21 @@
 
 /* CARD */
 
+.cards-container {
+    height: 53vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .card {
     position: relative;
     color: var(--white);
 }
 
-.card:first-child {
-    margin-bottom: 40px;
+.card > img {
+    width: 100%;
+    height: auto;
 }
 
 .card--front {
@@ -51,16 +60,20 @@
     position: absolute;
     top: 0;
 
-    width: calc(100% - 60px);
-    height: calc(100% - 60px - 4px); /* Card height - padding Y - ligne height compensation */
-
-    padding: 30px;
+    width: 90%;
+    height: 80%;
+    padding: 5% 5%;
 }
 
 .card__body--front {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.card__body--front > img {
+    width: 20%;
+    height: auto;
 }
 
 .card__body--front > div {
@@ -85,7 +98,7 @@
 
 .card__body--back > span {
     /* Compensation to fit within the image */
-    margin-right: 30px;
+    margin-right: 10%;
     margin-bottom: 5px;
 }
 
@@ -199,4 +212,55 @@ button:hover {
     background: var(--ligth-violet);
     color: var(--dark-violet);
     border-color: var(--dark-violet);
+}
+
+@media (max-width: 900px) {
+    #app {
+        flex-direction: column;
+
+        justify-content: flex-start;
+
+        /* justify-content: space-evenly; */
+        background-image: url('./images/bg-main-mobile.png');
+        background-position: top;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    .cards-container {
+        position: relative;
+
+        height: fit-content;
+
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: flex-end;
+
+
+        margin: 20px;
+        margin-bottom: 35%;
+    }
+    
+    .card--front {
+        position: absolute;
+        z-index: 2;
+        bottom: -55%;
+
+        margin-right: 15vw;
+    }  
+
+    .card--back {
+        margin-left: 15vw;
+    }
+
+}
+
+@media (max-width: 570px) {
+    .card__body--front > div > h2 {
+        font-size: 4.5vw; /* Magic number */
+    }
+         
+    .card__body--front > div > span {
+        font-size: 3vw; /* Magic number */
+    }
 }
