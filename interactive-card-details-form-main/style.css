@@ -21,7 +21,6 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    flex-wrap: wrap;
 
     background-image: url('./images/bg-main-desktop.png');
     background-position: left;
@@ -94,7 +93,8 @@
 /* FORM */
 
 form {
-    width: 25%;
+    min-width: 300px;
+    max-width: 25%;
 }
 
 .form__row {
@@ -173,4 +173,30 @@ form {
     font-size: 0.8em;
 
     margin-bottom: 5px;
+}
+
+button {
+    width: 100%;
+
+    padding: 1em;
+
+    color: var(--white);
+    font-weight: 600;
+
+    background: var(--dark-violet);
+
+    border-radius: 7px;
+    border: solid 1px var(--dark-violet);
+
+
+
+    cursor: pointer;
+
+    transition: all .2s ease-in-out;
+}
+
+button:hover {
+    background: var(--ligth-violet);
+    color: var(--dark-violet);
+    border-color: var(--dark-violet);
 }
