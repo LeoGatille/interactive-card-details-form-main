@@ -32,7 +32,7 @@
 /* CARD */
 
 .cards-container {
-    height: 53vh;
+    height: 57vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -46,6 +46,7 @@
 .card > img {
     width: 100%;
     height: auto;
+    filter: drop-shadow(14px 43px 43px rgba(0, 0, 0, 0.3));
 }
 
 .card--front {
@@ -108,6 +109,10 @@
 form {
     min-width: 300px;
     max-width: 25%;
+}
+
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
 
 .form__row {
@@ -240,6 +245,10 @@ button:hover {
         margin: 20px;
         margin-bottom: 35%;
     }
+
+    .card > img {
+        filter: none;
+    }
     
     .card--front {
         position: absolute;
@@ -252,6 +261,8 @@ button:hover {
     .card--back {
         margin-left: 15vw;
     }
+
+    
 
 }
 
