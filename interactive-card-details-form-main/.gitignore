@@ -16,3 +16,4 @@
 .prettierignore
 
 .vscode
+node_module

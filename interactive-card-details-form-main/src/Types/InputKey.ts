@@ -1,0 +1,1 @@
+export type InputKey = 'cardholderName' | 'cardNumber' | 'expirationMonth' | 'expirationYear' | 'cvc';
