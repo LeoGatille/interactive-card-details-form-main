@@ -1,7 +1,5 @@
-import { InputKey } from './InputKey';
 export type Model = {
-    key: InputKey,
-    id: string,
+    key: string,
     value: string,
     validationRules: Function[],
     onUpdate: Function,
