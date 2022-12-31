@@ -1,20 +1,17 @@
 import { ReactiveForm } from './Types/ReactiveForm';
 import { InputModelObservers } from './Types/InputModelObservers';
-const CREADIT_CARD_KEYS = ['cardNumber', 'cardholderName', 'expirationMonth', 'expirationYear', 'cvc'];
-document.getElementById('validateBtn').addEventListener('click', validate);
-const models: Model[] = CREADIT_CARD_KEYS.map((key) => new Model(key));
-
 
 // ---------------------------
 // Classes
 // ---------------------------
 
-
 export class Form {
-    constructor(fields: ReactiveForm[], validationBtnId: string, realTimeValidation = false) {
+    constructor(fields: ReactiveForm[], validationBtnId: string, validityObserver: Function, realTimeValidation = false,) {
 
         this.realTimeValidation = realTimeValidation;
         this.validationBtnId = validationBtnId;
+        this.validityObserver = validityObserver;
+
         const { inputs, DOMSlots } = fields
             .reduce((acc, { useDOMSlot, key, ...input }) => {
 
@@ -25,22 +22,30 @@ export class Form {
 
                 //! Make it readable
                 acc.inputs[key] = this.createInput(key, input.placeholder, observers, input.validationRules, input.value, input.allowsMultipleErrors);
-                if (useDOMSlot) acc.DOMSlots[key] = new DomController(key + 'Slot', input.value);
+                if (useDOMSlot) acc.DOMSlots[key] = new ReactiveDomSlot(key + 'Slot', input.value);
 
                 return acc;
-            }, { inputs: {} as Record<string, InputModel>, DOMSlots: {} as Record<string, DomController> });
+            }, { inputs: {} as Record<string, InputModel>, DOMSlots: {} as Record<string, ReactiveDomSlot> });
 
         this.inputs = inputs;
         this.DOMSlots = DOMSlots;
+
     }
 
     validationBtnId: string;
     inputs: Record<string, InputModel>;
-    DOMSlots: Record<string, DomController> = {};
+    DOMSlots: Record<string, ReactiveDomSlot> = {};
+    validityObserver: Function;
 
     _realTimeValidation: boolean;
+    _isValid = false;
 
-    private _isValid = false;
+
+    //! Order this mess
+
+    get value(): Record<string, string | string[]> {
+        return Object.entries(this.inputs).reduce((acc, [key, { value }]) => ({ ...acc, [key]: value }), {});
+    }
 
     private get realTimeValidation() {
         return this._realTimeValidation;
@@ -91,16 +96,21 @@ export class Form {
         return document.getElementById(this.validationBtnId) as HTMLButtonElement;
     }
 
+    get isValid() {
+        return this.isValid;
+        this.validityObserver(this.isValid);
+    }
+
     private set isValid(isValid) {
-        this.isValid = isValid;
+        this._isValid = isValid;
 
-        if (this.isValid) {
-            if (this.validationBtn.disabled) this.validationBtn.removeAttribute('disbled');
+        // if (this.isValid) {
+        //     if (this.validationBtn.disabled) this.validationBtn.removeAttribute('disbled');
 
-        } else {
-            this.validationBtn.setAttribute('disabled', 'true');
-            this.realTimeValidation = true;
-        }   
+        // } else {
+        //     this.validationBtn.setAttribute('disabled', 'true');
+        //     this.realTimeValidation = true;
+        // }
     }
 
     createInput(key: string, placeholder: string, observers: InputModelObservers, validationRules?: Function[], value?: string, allowsMultipleErrors?: boolean): InputModel {
@@ -113,8 +123,8 @@ export class Form {
     }
 }
 
-
-export class DomController { //* Will embody the Cards text slots
+//! Bad namming
+export class ReactiveDomSlot { //* Will embody the Cards text slots 
     constructor(id: string, value: string) {
         this.id = id;
         this._value = value;
@@ -139,6 +149,37 @@ export class DomController { //* Will embody the Cards text slots
 
 }
 
+export class ReactiveBtn {
+    constructor(id: string, text: string, onCLick: Function, disabled?: boolean) {
+        this.id = id;
+        this.setText(text);
+        this.setDisabledState(disabled);
+        this.setOnClickCallback(onCLick);
+    }
+    id: string;
+    text: string;
+    onClick: Function;
+    disabled = false;
+
+    setDisabledState(disabled: boolean) {
+        this.disabled = disabled;
+    }
+
+    setText(text) {
+        this.text = text;
+    }
+
+    setOnClickCallback(callback: Function) {
+        this.btn.removeEventListener('click', () => this.onClick); //! Seems braindead
+
+        this.onClick = callback;
+        this.btn.addEventListener('click', () => this.onClick);
+    }
+
+    get btn() {
+        return document.getElementById(this.id);
+    }
+}
 
 export class InputModel {
     constructor(id: string, placeholder: string, observers: InputModelObservers, validationRules?: Function[], value?: string, allowsMultipleErrors?: boolean) {
@@ -149,8 +190,11 @@ export class InputModel {
 
 
         if (value) {
+            //! When Form will have the control over validation this pattern must be rethought   
             if (validationRules) this._validationRules = validationRules;
             this.value = value;
+        } else {
+            this._validationRules = validationRules;
         }
 
         this.setDOMEventListener();
@@ -209,109 +253,6 @@ export class InputModel {
     }
 }
 
-
-
-
-class Model_LEGACY {
-    constructor(key) {
-        this.key = key;
-        this.placeholder = cardPlaceholder[key];
-        this.validationRules = formInputValidationRules[key];
-
-        this.setListener();
-    }
-
-    key: string;
-    placeholder: string;
-    validationRules: Function[];
-    value = '';
-    errors: string[] = [];
-    realTimeValidation = false;
-
-    update(value: string) {
-        this.value = value;
-        this.errors = this.getErrors();
-
-        this.updateCardSlot(this.value || this.placeholder);
-        if (this.realTimeValidation) this.validate();
-    }
-
-    // DOM manipulations
-    private updateCardSlot(value: string) {
-        this.getDisplaySlot().innerText = value;
-    }
-
-    private getDisplaySlot(): HTMLInputElement {
-        return document.getElementById(this.key) as HTMLInputElement;
-    }
-
-    // Form handling
-    private setListener() {
-        this.getInput().addEventListener('input', (event) => this.update((event.target as HTMLInputElement).value));
-    }
-
-    private getInput(): HTMLElement {
-        return document.getElementById(this.key + 'Input');
-    }
-
-    // Error handling
-    private validate(): boolean {
-        if (this.errors.length) {
-            this.displayErrors();
-            return false;
-        }
-
-        return true;
-    }
-
-    private getErrors(): string[] {
-        return this.validationRules.reduce((acc, rule) => {
-            const ruleResult: string | boolean = rule(this.value);
-            return ruleResult === true ? acc : [...acc, ruleResult];
-        }, []);
-    }
-    private getErrorSlot() {
-        return document.getElementById(this.key + 'ErrorsSlot');
-    }
-    private displayErrors() {
-        this.errors.forEach(errorTxt => {
-            const errorElement = document.createElement('span');
-            errorElement.innerHTML = errorTxt;
-            errorElement.classList.add('error');
-
-            this.getErrorSlot().appendChild(errorElement);
-            const input = this.getInput();
-            if (!input.classList.contains('input--error')) input.classList.add('input--error');
-        });
-    }
-
-}
-
-// ---------------------------
-// Helpers
-// ---------------------------
-
-const cardPlaceholder = {
-    cardNumber: '0000 0000 0000 0000',
-    cardholderName: 'Jane Appleseed',
-    expirationMonth: '00',
-    expirationYear: '00',
-    cvc: '000'
-}
-
-// ---------------------------
-// On Update
-// ---------------------------
-
-const formInputUpdate = {
-    cvc: () => { },
-    cardholderName: () => { },
-    cardNumber: () => { },
-    expirationMonth: () => { },
-    expirationYear: () => { },
-}
-
-
 // ---------------------------
 // Validation Rules
 // ---------------------------
@@ -320,8 +261,8 @@ const formInputUpdate = {
 const formInputValidationRules = {
     cardholderName: [required, cardholderNameFormat],
     cardNumber: [required, cardNumberFormat],
-    expirationMonth: [required],
-    expirationYear: [required],
+    expirationDateMonth: [required],
+    expirationDateYear: [required],
     cvc: [required],
 };
 
@@ -344,3 +285,131 @@ function cardholderNameFormat(v: string) {
 function cardNumberFormat(v: string) {
     return regExpCheck(v, cardNumber) || 'Wrong format';
 }
+
+// ---------------------------
+// Utility
+// ---------------------------
+
+function createReactiveForm(key: string, useDOMSlot = false): ReactiveForm {
+    return {
+        key,
+        useDOMSlot,
+        placeholder: cardPlaceholder[key],
+        validationRules: formInputValidationRules[key],
+        allowsMultipleErrors: false,
+    }
+}
+
+const cardPlaceholder = {
+    cardNumber: '0000 0000 0000 0000',
+    cardholderName: 'Jane Appleseed',
+    expirationDateMonth: '00',
+    expirationDateYear: '00',
+    cvc: '000'
+}
+
+// ---------------------------
+// Script
+// ---------------------------
+
+//! INSTALL WEBPACK YOU LAZY BOYY !
+
+const DOMStates: { [key: string]: { init: Function, destroy: Function, data: any } } = { //* Put any structure that's upper than the Form in hierachy 
+    form: {
+        data: {
+            form: {
+                reactiveFormKeys: ['cardNumber', 'cardholderName', 'expirationDateMonth', 'expirationDateYear', 'cvc'],
+                model: null,
+            },
+            onValidate() {
+                if (form.isValid) {
+                    //* Add API call & error handling here
+                    this.destroy()
+                };
+            },
+        },
+        init() {
+            this.data.form.model = new Form(
+                this.data.form.data.reactiveFormKeys.map(key => createReactiveForm(key, true)),
+                'validateBtn',
+                this.data.form.realTimeValidation
+            );
+            //? Could be nice to add a render function using tsx or web components
+            document.getElementsByTagName('form')[0].style.display = 'block';
+        },
+        destroy() {
+            //? Could notify the destroy event
+            document.getElementsByTagName('form')[0].style.display = 'none';
+        }
+    }
+}
+
+const context = {
+    data: {
+        _state: null,
+        formValues: null,
+    },
+
+    get state() {
+        return this.state;
+    },
+
+    set state(state) {
+        this._state = state;
+        switch (this.state) {
+            case ('form'):
+                this.components.form.onInit();
+                break;
+        }
+    },
+
+    validate() {
+        if (Object.hasOwn(this.components[this.state], 'onValidate')) this.components[this.state].onValidate();
+    },
+
+
+    components: {
+        form: {
+            data: {
+                form: {
+                    reactiveFormKeys: ['cardNumber', 'cardholderName', 'expirationDateMonth', 'expirationDateYear', 'cvc'],
+                    model: null,
+                },
+            },
+            init() {
+                this.data.form.model = new Form(
+                    this.data.form.data.reactiveFormKeys.map(key => createReactiveForm(key, true)),
+                    'validateBtn',
+                    this.data.form.validation
+                );
+                //? Could be nice to add a render function using tsx or web components
+                document.getElementsByTagName('form')[0].style.display = 'block';
+            },
+            onValidate() {
+                if (this.form.model.isValid) {
+                    //* Add API call & error handling here
+                    this.destroy()
+                } else if (!this.form.model.realTimeValidation) {
+                    this.form.model.realTimeValidation = true;
+                }
+            },
+            destroy() {
+                //? I don't like that components handles their own display
+                //? Should be a nice way to notify that destroy is triggered
+
+                //- Maybe it's not too bad since those function instead of forming a real lifecyle looks a loot like VueJs events 
+                document.getElementsByTagName('form')[0].style.display = 'none';
+            }
+        },
+    },
+
+    validationBtn: new ReactiveBtn('validateBtn', '', () => { }),
+
+    setState(state) {
+        this.state = state;
+
+    }
+}
+
+
+const form = new Form(CREADIT_CARD_KEYS.map(key => createReactiveForm(key)), 'validateBtn');
