@@ -242,32 +242,6 @@ const cardPlaceholder = {
 // Script
 // ---------------------------
 //! INSTALL WEBPACK YOU LAZY BOYY !
-const DOMStates = {
-    form: {
-        data: {
-            form: {
-                reactiveFormKeys: ['cardNumber', 'cardholderName', 'expirationDateMonth', 'expirationDateYear', 'cvc'],
-                model: null,
-            },
-            onValidate() {
-                if (form.isValid) {
-                    //* Add API call & error handling here
-                    this.destroy();
-                }
-                ;
-            },
-        },
-        init() {
-            this.data.form.model = new Form(this.data.form.data.reactiveFormKeys.map(key => createReactiveForm(key, true)), 'validateBtn', this.data.form.realTimeValidation);
-            //? Could be nice to add a render function using tsx or web components
-            document.getElementsByTagName('form')[0].style.display = 'block';
-        },
-        destroy() {
-            //? Could notify the destroy event
-            document.getElementsByTagName('form')[0].style.display = 'none';
-        }
-    }
-};
 const context = {
     data: {
         _state: null,
@@ -278,42 +252,52 @@ const context = {
     },
     set state(state) {
         this._state = state;
-        switch (this.state) {
-            case ('form'):
+        switch (this.state) { //! this.tate shouldn't only be a component key
+            case ('form'): //? Not very flexible
                 this.components.form.onInit();
                 break;
         }
     },
+    init() {
+        this.state = 'form';
+    },
     validate() {
-        if (Object.hasOwn(this.components[this.state], 'onValidate'))
-            this.components[this.state].onValidate();
+        switch (this.state) {
+            case ('form'): //? Not very flexible
+                const isValid = this.components.form.onValidate();
+                if (isValid) { //! Getting messy
+                    this.data.formValue = this.components.form.value;
+                    this.commited.form.destroy();
+                }
+                break;
+        }
     },
     components: {
         form: {
+            props: {
+                reactiveFormKeys: ['cardNumber', 'cardholderName', 'expirationDateMonth', 'expirationDateYear', 'cvc'],
+            },
             data: {
-                form: {
-                    reactiveFormKeys: ['cardNumber', 'cardholderName', 'expirationDateMonth', 'expirationDateYear', 'cvc'],
-                    model: null,
-                },
+                model: null,
             },
             init() {
-                this.data.form.model = new Form(this.data.form.data.reactiveFormKeys.map(key => createReactiveForm(key, true)), 'validateBtn', this.data.form.validation);
+                this.data.form.model = new Form(this.props.reactiveFormKeys.map(key => createReactiveForm(key, true)), 'validateBtn', this.data.form.validation);
                 //? Could be nice to add a render function using tsx or web components
                 document.getElementsByTagName('form')[0].style.display = 'block';
             },
             onValidate() {
-                if (this.form.model.isValid) {
-                    //* Add API call & error handling here
-                    this.destroy();
-                }
-                else if (!this.form.model.realTimeValidation) {
+                //! This is just bad
+                if (this.form.model.isValid)
+                    return true;
+                //! Bad sideEffect. Should be higher
+                //? realTimeValidation could become a prop
+                if (!this.form.model.realTimeValidation)
                     this.form.model.realTimeValidation = true;
-                }
+                return false;
             },
             destroy() {
                 //? I don't like that components handles their own display
                 //? Should be a nice way to notify that destroy is triggered
-                //- Maybe it's not too bad since those function instead of forming a real lifecyle looks a loot like VueJs events 
                 document.getElementsByTagName('form')[0].style.display = 'none';
             }
         },
@@ -323,5 +307,4 @@ const context = {
         this.state = state;
     }
 };
-const form = new Form(CREADIT_CARD_KEYS.map(key => createReactiveForm(key)), 'validateBtn');
 //# sourceMappingURL=index.js.map
